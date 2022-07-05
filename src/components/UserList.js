@@ -1,25 +1,36 @@
-import React from "react";
-import User from "./User";
-import Loader from "./Loader";
+import React, { useContext } from 'react';
+import User from './User';
+import Loader from './Loader';
 
-const UserList = (props) => {
-  // const { avatar_url, profile_link, user_name } = this.state;
-  return !props.loading ? (
-    <div style={userContainer}>
-      {props.users.map((user) => {
-        return <User key={user.id} user={user} />;
-      })}
-    </div>
-  ) : (
-    // <p className="text-muted text-center large">Loading...</p>
-    <Loader />
-  );
+import GithubContext from '../context/github/githubContext';
+import { useEffect } from 'react';
+
+const UserList = () => {
+    const githubContextObj = useContext(GithubContext);
+    var { loading, users, getDefaultUsers, isSearchedResults } = githubContextObj;
+
+    useEffect(() => {
+        if (!isSearchedResults) {
+            getDefaultUsers();
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+    return !loading ? (
+        <div style={userContainer}>
+            {users.map((user) => {
+                return <User key={user.id} user={user} />;
+            })}
+        </div>
+    ) : (
+        <Loader />
+    );
 };
 
 const userContainer = {
-  display: "grid",
-  gridTemplateColumns: "repeat(3, 1fr)",
-  gridGap: "1rem",
+    display: 'grid',
+    gridTemplateColumns: 'repeat(3, 1fr)',
+    gridGap: '1rem'
 };
 
 export default UserList;
